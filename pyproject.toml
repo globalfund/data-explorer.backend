@@ -1,0 +1,24 @@
+[project]
+name = "data-explorer-backend"
+version = "0.1.0"
+description = "Python Flask API for data processing, storage and access."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dotenv>=0.9.9",
+    "flask>=3.1.2",
+    "gunicorn>=23.0.0",
+    "rb-core-backend",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.11.0",
+    "flake8>=7.3.0",
+    "flake8-isort>=7.0.0",
+    "isort>=7.0.0",
+    "pre-commit>=4.4.0",
+]
+
+[tool.uv.sources]
+rb-core-backend = { git = "https://github.com/globalfund/rb-core.backend.git" }

@@ -1,0 +1,11 @@
+services:
+  data-explorer-backend:
+    build: .
+    image: data-explorer-backend
+    command: gunicorn --bind 0.0.0.0:5000 app:app -w 4
+    volumes:
+      - ./:/app/
+    ports:
+      - 5000:5000
+    env_file:
+      - .env
