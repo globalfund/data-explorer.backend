@@ -46,8 +46,8 @@ mongo_client = RBCoreBackendMongo(
     mongo_host=os.getenv("MONGO_HOST"),
     mongo_username=os.getenv("MONGO_USERNAME"),
     mongo_password=os.getenv("MONGO_PASSWORD"),
-    mongo_auth_source=os.getenv("MONGO_AUTH_SOURCE"),
-    database_name="the-data-explorer-db",
+    mongo_auth_source=os.getenv("MONGO_AUTH_SOURCE", "admin"),
+    database_name=os.getenv("MONGO_DB_NAME", "the-data-explorer-db"),
     fs_db_name="FederatedSearchIndex",
 )
 # - Create a TGFDatasetManager instance
@@ -88,6 +88,50 @@ def update_tgf_datasets():
 def force_update_tgf_dataset(dataset_name: str):
     message, code = gf_dataset_manager.force_update_dataset(dataset_name)
     return json_return(code, message)
+
+
+# Data access routes
+@app.route("/dataset/<string:ds_name>", methods=["GET"])
+def get_dataset(ds_name: str) -> dict:
+    """Request to get a dataset. Paginated through request args page and page_size.
+
+    Args:
+        ds_name (str): Dataset name
+
+    Returns:
+        dict: code and dataset or error message
+    """
+    page = int(request.args.get("page", 1))
+    page_size = int(request.args.get("page_size", 10))
+
+    logging.debug(f"route: /dataset/<string:ds_name> - Getting dataset {ds_name}")
+    try:
+        res = data_manager.load_parsed_data(ds_name, page, page_size)
+    except Exception as e:
+        logging.error(f"Error in route: /dataset/<string:ds_name> - {str(e)}")
+        res = "Sorry, something went wrong in our dataset retrieval. Contact the admin for more information."
+    code = 200 if not isinstance(res, str) else 500
+    return json_return(code, res)
+
+
+@app.route("/sample-data/<string:ds_name>", methods=["GET"])
+def sample_data(ds_name: str) -> dict:
+    """Get the sample dataset for a given dataset name.
+
+    Args:
+        ds_name (str): Dataset name
+
+    Returns:
+        dict: code and sample dataset or error message
+    """
+    logging.debug(f"route: /sample-data/<string:ds_name> - Sampling dataset {ds_name}")
+    try:
+        res = data_manager.load_sample_data(ds_name)
+    except Exception as e:
+        logging.error(f"Error in route: /sample-data/<string:ds_name> - {str(e)}")
+        res = "Sorry, something went wrong in our dataset sampling. Contact the admin for more information."
+    code = 200 if not isinstance(res, str) else 500
+    return json_return(code, res)
 
 
 if __name__ == "__main__":
