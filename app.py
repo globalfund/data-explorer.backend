@@ -44,10 +44,10 @@ dataset_preprocessor = TGFRBCoreDatasetPreprocessor(
 # - Create a RBCoreBackendMongo instance
 mongo_client = RBCoreBackendMongo(
     mongo_host=os.getenv("MONGO_HOST"),
-    mongo_username=os.getenv("MONGO_USERNAME"),
-    mongo_password=os.getenv("MONGO_PASSWORD"),
+    mongo_username=os.getenv("MONGO_INITDB_ROOT_USERNAME"),
+    mongo_password=os.getenv("MONGO_INITDB_ROOT_PASSWORD"),
     mongo_auth_source=os.getenv("MONGO_AUTH_SOURCE", "admin"),
-    database_name=os.getenv("MONGO_DB_NAME", "the-data-explorer-db"),
+    database_name=os.getenv("MONGO_INITDB_DATABASE", "the-data-explorer-db"),
     fs_db_name="FederatedSearchIndex",
 )
 # - Create a TGFDatasetManager instance
