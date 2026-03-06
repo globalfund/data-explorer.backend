@@ -24,6 +24,8 @@ GF_DATA_URLS = {
     "gf_grant_targets_results.csv": "https://data-service.theglobalfund.org/file_download/grant_targets_results_dataset/CSV",  # NOQA: E501
 }  # Note: This could be loaded from a config file in the future, depending on stakeholder desires.
 
+METADATA_LOC = "./staging/metadata.json"
+
 
 class TGFDatasetManager:
     """Manages The Global Fund datasets."""
@@ -68,9 +70,9 @@ class TGFDatasetManager:
                         f"download_datasets:: Preprocessing message for {key}: {preprocess_message}"
                     )
                     return preprocess_message, 500
-            with open("./staging/metadata.json", "w") as file:
+            with open(METADATA_LOC, "w") as file:
                 json.dump(metadata, file, default=self._json_safe, indent=4)
-            self.logger.info("download_datasets:: Updated metadata.json for ")
+            self.logger.info("download_datasets:: Updated metadata.json")
         except Exception as e:
             message = "Failed to download datasets."
             self.logger.error(f"download_datasets:: {message}. Error:\n{e}")
@@ -93,7 +95,7 @@ class TGFDatasetManager:
             metadata, now_datetime = self._load_metadata()
             dataset_name = f"{dataset_name}.csv"
             if dataset_name not in GF_DATA_URLS:
-                return f"Dataset {dataset_name} not found in our Global Fund datasets!"
+                return f"Dataset {dataset_name} not found in our Global Fund datasets!", 500
 
             self.logger.info(
                 f"force_update_dataset:: Forcing update for dataset: {dataset_name}"
@@ -111,7 +113,7 @@ class TGFDatasetManager:
                 )
                 return preprocess_message, 500
 
-            with open("./staging/metadata.json", "w") as file:
+            with open(METADATA_LOC, "w") as file:
                 json.dump(metadata, file, default=self._json_safe, indent=4)
             self.logger.info("force_update_dataset:: Updated metadata.json")
         except Exception as e:
@@ -128,7 +130,7 @@ class TGFDatasetManager:
         """
         try:
             now_datetime = datetime.now().isoformat()
-            metadata = json.load(open("./staging/metadata.json"))
+            metadata = json.load(open(METADATA_LOC))
             self.logger.info("_load_metadata:: Loaded existing metadata.json")
         except Exception as e:
             metadata = {}

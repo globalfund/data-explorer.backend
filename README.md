@@ -47,7 +47,7 @@ It makes use of [Data API Middleware](https://github.com/globalfund/data-explore
 
 After installation, run: `uv sync` followed by `source .venv/bin/activate`.
 
-Run the project with `uv run flask run`.
+Run the project with `uv run flask run`. Note: ensure the timeout for api calls is not the default 30 seconds. The `/update-tgf-datasets` call can take between just under one and five minutes, depending on the systems we have tested on.
 
 ### Commits
 
