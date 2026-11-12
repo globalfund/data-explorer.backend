@@ -22,4 +22,4 @@ dev = [
 ]
 
 [tool.uv.sources]
-rb-core-backend = { git = "https://github.com/globalfund/rb-core.backend.git" }
+rb-core-backend = { git = "https://github.com/globalfund/rb-core.backend.git", rev = "6feb2c6b45cf598b147881321f5fa658c8c25d5d" }
