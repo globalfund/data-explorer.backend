@@ -9,6 +9,7 @@
     - [Commits](#commits)
     - [Code Management](#code-management)
     - [Adding packages](#adding-packages)
+    - [External sources and file uploads](#external-sources-and-file-uploads)
   - [Deployment](#deployment)
     - [Cron](#cron)
     - [Docker](#docker)
@@ -84,6 +85,18 @@ After adding a package that needs to be included in `requirements.txt` for Docke
 ```bash
 uv export --no-dev --no-hashes --format requirements-txt > requirements.txt
 ```
+
+### External sources and file uploads
+
+Besides the Global Fund datasets, datasets can be connected from Kaggle and the WHO Global Health Observatory, or uploaded as a file (`.csv`, `.tsv`, `.json`, `.xlsx`, `.xlsm` or `.parquet`). These are stored with the id provided by the [middleware](https://github.com/globalfund/data-explorer-server/), and are then served like any other dataset.
+
+- `GET /external-sources/index` indexes all sources into MongoDB, `GET /external-sources/force-reindex/<WHO|Kaggle>` a single one. The sources can only be searched after they have been indexed.
+- `GET /external-sources/search` and `GET /external-sources/counts` search and count the indexed datasets.
+- `POST /external-sources/download` downloads and processes a search result.
+- `POST /upload-file/<id>?filename=<name>` processes the file sent as request body.
+- `DELETE /dataset/<id>` removes a connected or uploaded dataset.
+
+Kaggle requires API credentials, through `KAGGLE_USERNAME` and `KAGGLE_KEY` or `~/.kaggle/kaggle.json`. Indexing Kaggle requests the details of every dataset and takes hours, `KAGGLE_INDEX_MAX_PAGES` limits it to the most popular datasets (20 per page). Indexing WHO takes a few seconds.
 
 ## Deployment
 
